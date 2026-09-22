@@ -17,9 +17,9 @@ HA.CONFIG = {
   ],
 
   horseOptions: [
-    { id: "firstTimer", emoji: "🐴", label: "FIRST TIMER", summaryLabel: "First Timer", tagline: "I have no idea what I'm doing.", reaction: "HORSE DEPARTMENT NOTIFIED" },
-    { id: "riddenBefore", emoji: "🐎", label: "RIDDEN BEFORE", summaryLabel: "Ridden Before", tagline: "I possess previous horse-related experience.", reaction: "PREVIOUS EXPERIENCE DETECTED" },
-    { id: "professional", emoji: "🏇", label: "BASICALLY A PROFESSIONAL*", summaryLabel: "Basically a Professional", tagline: "*Citation needed.", reaction: "CLAIM PENDING VERIFICATION" }
+    { id: "firstTimer", emoji: "🐴", label: "FIRST TIMER", summaryLabel: "First Timer", tagline: "I have no idea what I'm doing.", reaction: "HORSE DEPARTMENT NOTIFIED", memeKey: "horseIncident" },
+    { id: "riddenBefore", emoji: "🐎", label: "RIDDEN BEFORE", summaryLabel: "Ridden Before", tagline: "I possess previous horse-related experience.", reaction: "PREVIOUS EXPERIENCE DETECTED", memeKey: "horseIncident" },
+    { id: "professional", emoji: "🏇", label: "BASICALLY A PROFESSIONAL*", summaryLabel: "Basically a Professional", tagline: "*Citation needed.", reaction: "CLAIM PENDING VERIFICATION", memeKey: "horseArchers" }
   ],
 
   foodOptions: [
@@ -66,7 +66,8 @@ HA.CONFIG = {
     },
     food: {
       title: "POST-HORSE RECOVERY PROTOCOL",
-      helper: "Select all required recovery procedures."
+      helper: "Select all required recovery procedures.",
+      completionCaption: "CALORIC SURPLUS AUTHORIZED."
     },
     summary: {
       title: "MISSION PARAMETERS",
@@ -146,6 +147,9 @@ HA.CONFIG = {
   memes: {
     dateSelected: "assets/memes/date-approved.png",
     // Asset slots: missing images skip the NO popup and preserve progression.
+    horseIncident: "assets/memes/horse-incident.png",
+    horseArchers: "assets/memes/horse-archers.png",
+    caloricSurplus: "assets/memes/caloric-surplus.png",
     noPlea: "assets/memes/no-plea.png",
     noPaperwork: "assets/memes/no-paperwork.png",
     approved: "assets/memes/mission-approved.png"

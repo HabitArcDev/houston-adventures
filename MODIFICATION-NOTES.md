@@ -69,3 +69,53 @@ Added the user-supplied IMG_0063.png unchanged as `assets/memes/no-plea.png` (68
 ### Supplied paperwork asset
 
 Added the user-supplied IMG_0064.png unchanged as `assets/memes/no-paperwork.png`. The existing `noPaperwork` mapping activates it on attempt 4. Both requested NO assets are now present; earlier missing-asset notes describe the prior state.
+
+
+## September 22: food-completion exception
+
+Inspected the existing file map, food Continue handler, session state, transition map and shared popup before editing. The only new functional requirement is the food-completion exception; prior experience options, confirmed dates, four-attempt NO sequence and final-result sizing remain intact.
+
+- `js/config.js`: adds `caloricSurplus` to the shared meme map and the caption “CALORIC SURPLUS AUTHORIZED.”
+- `js/app.js`: adds an in-memory `foodCompletionShown` flag, set before showing the popup. The existing Continue lock prevents rapid taps; the popup callback is the sole navigation path for the first completion. Later completions in the same session advance directly. Selections and label joining are unchanged.
+- `README.md`: documents behavior and the missing asset.
+- `MODIFICATION-NOTES.md`: records this audit and validation.
+
+The existing popup, CSS, share code and NO state machine were reused unchanged. No back navigation exists; the once-per-session guard also covers a programmatic revisit. Reload starts a new session. No new visual treatment or responsive change was needed.
+
+Asset still needed: `/Users/andyho/Documents/ChatGPT/Houston Adventures/assets/memes/caloric-surplus.png`. No image was generated or substituted. Until supplied, missing-image handling skips the popup and advances to summary.
+
+Food regression tests passed with a browser-only image fixture in normal and reduced motion: single food, Lucy Chooses, multiple food choices, repeated rapid Continue clicks, exactly one navigation, repeated visit without replay, correct final/share labels, 320px touch viewport with no popup scrolling, and the actual missing-file fallback. The test fixture is not part of the shipped site.
+
+Broader approval/decline regressions also passed at 1440×900, 1280×800, 360×800, 390×844 and 320×700 (reduced motion), including NO progression, native-share mocks, clipboard/manual-copy fallbacks, custom dates and no horizontal overflow or JavaScript page errors. These are Chrome desktop/touch-emulation results, not real-device certification. Nothing was deployed.
+
+
+### Supplied food-completion asset
+
+Added user-supplied IMG_0066.png unchanged as `assets/memes/caloric-surplus.png`. The existing `caloricSurplus` config key activates it once per session after food Continue, with summary navigation on dismissal. This resolves the missing asset noted above.
+
+
+## September 22: horse-completion memes
+
+Inspected horse rendering in `js/app.js`, the shared option helper and session fields, option data and meme mapping in `js/config.js`, and the existing popup/navigation behavior. The old horse step auto-advanced on an option tap; contrary to the prompt's assumption it had no Continue control. Added Continue in the existing primary-button style, disabled until a valid selection. Inline reactions remain attached to the selected card and now stay readable until Continue.
+
+Changed files:
+- `js/app.js`: adds `horseMemeShown`, preserves selected state on revisits, and gates forward navigation through one popup on Continue. Routing looks up the option by stored `horseExperience` ID and reads its configured meme key; it never depends on label or option order. Repeated visits skip replay; reload resets the session.
+- `js/config.js`: routes firstTimer/riddenBefore to horseIncident and professional to horseArchers; adds both paths to the existing meme map.
+- `assets/memes/horse-archers.png`: copies Andy's supplied IMG_0069.png unchanged. No generated artwork. Its embedded caption is not duplicated outside the image.
+- `README.md` and this report: update behavior and asset status.
+
+Expected assets in `/Users/andyho/Documents/ChatGPT/Houston Adventures/assets/memes/`:
+- `horse-archers.png`: installed.
+- `horse-incident.png`: still awaiting Andy's file; missing-image handling advances to Food.
+- `caloric-surplus.png`: already installed and preserved.
+
+The visual design, shared popup/CSS, food selections, food-completion flag, confirmed dates, NO escalation and share implementation are unchanged. No back-navigation UI exists; programmatic revisits were used to verify selection persistence and the once-per-session guard. No new responsive issue or styling change was needed.
+
+Focused tests passed for all three experiences in normal/reduced motion at 320px with touch input: inline reactions, correct route, reverse option order, duplicate Continue events, one popup only, revisit without replay, unchanged stored experience, Food meme coexistence, share labels, missing images and popup fit without scrolling. The missing incident branch used a browser-only fixture for its presentation test, then the actual missing file for recovery testing. No fixture is shipped.
+
+Full approval/decline regressions passed at 1440×900, 1280×800, 360×800, 390×844 and 320×700, including Horse Continue, the food popup, all NO stages and share/clipboard/manual-copy paths. No JavaScript page errors or horizontal overflow occurred. Real Android hardware and Safari were not tested; no deployment was performed.
+
+
+### Supplied incident asset
+
+Added Andy’s IMG_0068.png unchanged as `assets/memes/horse-incident.png`. The existing horseIncident mapping activates it after Continue for First Timer and Ridden Before. Both horse assets are now installed; earlier missing-asset notes describe the prior state.

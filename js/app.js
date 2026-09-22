@@ -7,7 +7,7 @@
     if (event.matches) { const no = document.querySelector('.no-button'); no?.classList.remove('roaming'); if (no) no.style.transform = ''; }
   };
   if (motion.addEventListener) motion.addEventListener('change', changeMotion); else motion.addListener(changeMotion);
-  H.session = { weekendId: null, customWeekend: '', horseExperience: null, foodIds: [], declined: false };
+  H.session = { weekendId: null, customWeekend: '', horseExperience: null, foodIds: [], foodCompletionShown: false, horseMemeShown: false, declined: false };
   let toastTimer, dateBusy = false;
   H.toast = text => { const host = document.getElementById('toast'); clearTimeout(toastTimer); host.textContent = text; host.hidden = false; toastTimer = setTimeout(() => { host.hidden = true; }, T.copyToastMs); };
   const el = (tag, text, className) => { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node; };
@@ -98,16 +98,31 @@
   function horses() {
     const host = screen('HORSE_SELECT'); host.replaceChildren(heading(copy.horse.question), el('p', copy.horse.helper)); let locked = false;
     const choices = group('horse-options', copy.horse.question);
+    const proceed = button(copy.continueLabel, () => {
+      const selected = C.horseOptions.find(item => item.id === H.session.horseExperience);
+      if (locked || !selected) return;
+      locked = true; proceed.disabled = true; choices.querySelectorAll('button').forEach(node => { node.disabled = true; });
+      const next = () => H.state.goTo('FOOD_SELECT');
+      if (H.session.horseMemeShown) { next(); return; }
+      H.session.horseMemeShown = true;
+      // The supplied artwork carries its own caption.
+      H.MemePopup.show({ memeKey: selected.memeKey, caption: '', skipOnMissing: true, onClose: next });
+    });
+    proceed.disabled = !C.horseOptions.some(item => item.id === H.session.horseExperience);
     C.horseOptions.forEach(item => {
       const card = el('div');
-      card.append(option(item, node => {
-        if (locked) return; locked = true; H.session.horseExperience = item.id; setRadio(choices, node);
-        announce(reaction(card), item.reaction);
-        later(() => H.state.goTo('FOOD_SELECT'), T.reactionHoldMs);
-      }));
+      const node = option(item, active => {
+        if (locked) return;
+        H.session.horseExperience = item.id; setRadio(choices, active);
+        choices.querySelectorAll('.reaction').forEach(line => { line.hidden = true; });
+        announce(feedback, item.reaction); proceed.disabled = false;
+      });
+      card.append(node);
+      const feedback = reaction(card);
+      node.setAttribute('aria-checked', String(item.id === H.session.horseExperience));
       choices.append(card);
     });
-    host.append(choices);
+    host.append(choices, proceed);
   }
 
   function foods() {
@@ -115,7 +130,10 @@
     const choices = group('food-options', copy.food.title, false); const selected = new Set(); let locked = false;
     const proceed = button(copy.continueLabel, () => {
       if (locked || !selected.size) return; locked = true; H.session.foodIds = [...selected]; proceed.disabled = true; choices.querySelectorAll('button').forEach(b => { b.disabled = true; });
-      H.state.goTo('SUMMARY');
+      const next = () => H.state.goTo('SUMMARY');
+      if (H.session.foodCompletionShown) { next(); return; }
+      H.session.foodCompletionShown = true;
+      H.MemePopup.show({ memeKey: 'caloricSurplus', caption: copy.food.completionCaption, skipOnMissing: true, onClose: next });
     }); proceed.disabled = true;
     const update = () => { const exclusive = C.foodOptions.find(x => x.exclusive && selected.has(x.id)); [...choices.children].forEach((node, i) => { node.setAttribute('aria-pressed', String(selected.has(C.foodOptions[i].id))); node.disabled = !!exclusive && C.foodOptions[i].id !== exclusive.id; }); proceed.disabled = selected.size === 0; };
     C.foodOptions.forEach(item => choices.append(option(item, () => { if (selected.has(item.id)) selected.delete(item.id); else { if (item.exclusive) selected.clear(); selected.add(item.id); } update(); }, false)));
